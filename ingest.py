@@ -15,7 +15,6 @@ import os
 os.environ["OPENAI_API_TYPE"] = "azure"
 os.environ["OPENAI_API_BASE"] = "https://x.openai.azure.com/"
 os.environ["OPENAI_API_KEY"] = ""
-#os.environ["OPENAI_API_KEY"] = "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"
 
 def ingest_docs():
     """Get documents from web pages."""
