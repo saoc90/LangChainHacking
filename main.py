@@ -1,6 +1,7 @@
 """Main entrypoint for the app."""
 import logging
 import pickle
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -11,6 +12,10 @@ from langchain.vectorstores import VectorStore
 from callback import QuestionGenCallbackHandler, StreamingLLMCallbackHandler
 from query_data import get_chain
 from schemas import ChatResponse
+
+os.environ["OPENAI_API_TYPE"] = "azure"
+os.environ["OPENAI_API_BASE"] = "https://x.openai.azure.com/"
+os.environ["OPENAI_API_KEY"] = ""
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")

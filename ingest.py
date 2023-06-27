@@ -5,19 +5,37 @@ from langchain.document_loaders import ReadTheDocsLoader
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores.faiss import FAISS
+from langchain.document_loaders import UnstructuredHTMLLoader
+from langchain.document_loaders import PyPDFLoader
+#from langchain.document_loaders import PyMuPDFLoader
 
+
+import os
+
+os.environ["OPENAI_API_TYPE"] = "azure"
+os.environ["OPENAI_API_BASE"] = "https://x.openai.azure.com/"
+os.environ["OPENAI_API_KEY"] = ""
+#os.environ["OPENAI_API_KEY"] = "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"
 
 def ingest_docs():
     """Get documents from web pages."""
-    loader = ReadTheDocsLoader("langchain.readthedocs.io/en/latest/")
-    raw_documents = loader.load()
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=200,
-    )
-    documents = text_splitter.split_documents(raw_documents)
-    embeddings = OpenAIEmbeddings()
-    vectorstore = FAISS.from_documents(documents, embeddings)
+
+    file_paths = []
+    raw_documents = []
+    #for root, directories, files in os.walk("/mnt/c/Users/u44850/Downloads/extracted"):
+    for root, directories, files in os.walk("/mnt/c/Users/u44850/Downloads/meag"):
+        for filename in files:
+            # Join the two strings in order to form the full filepath.
+            filepath = os.path.join(root, filename)
+            file_paths.append(filepath)
+
+
+            loader = PyPDFLoader(filepath)
+            pages = loader.load()
+
+            raw_documents.extend(pages)
+    embeddings = OpenAIEmbeddings(chunk_size=1)
+    vectorstore = FAISS.from_documents(raw_documents, embeddings)
 
     # Save vectorstore
     with open("vectorstore.pkl", "wb") as f:
